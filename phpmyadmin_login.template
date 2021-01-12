@@ -1,0 +1,15 @@
+phpMyAdmin login
+================
+
+phpMyAdmin is installed at /phpmyadmin
+
+Username: admin
+Password: PASSWORD
+
+If additional users need to be given access, those can be managed through htpasswd.
+
+Add or modify a user:
+$ htpasswd /app/data/.phpmyadminauth newusername
+
+Remove a user:
+$ htpasswd -D /app/data/.phpmyadminauth oldusername

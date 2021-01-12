@@ -1,0 +1,37 @@
+{
+  "id": "org.urgero.vslamp",
+  "title": "Visual Studio Code",
+  "author": "Microsoft",
+  "description": "file://DESCRIPTION.md",
+  "tagline": "VSCode for the web!",
+  "version": "1.3.2",
+  "healthCheckPath": "/proxy/81/",
+  "memoryLimit": 1342177280,
+  "httpPort": 80,
+  "manifestVersion": 2,
+  "website": "https://github.com/cdr/code-server/",
+  "contactEmail": "apps@cloudron.io",
+  "icon": "logo.png",
+  "addons": {
+    "mysql": {
+      "multipleDatabases": true
+    },
+    "localstorage": {
+      "ftp": {
+        "uid": 33,
+        "uname": "www-data"
+      }
+    },
+    "sendmail": {},
+    "redis": {},
+    "ldap": {},
+    "proxyAuth":{}
+  },
+  "tags": [ "apache", "php", "mysql", "hosting", "lamp", "stacks", "development" ],
+  "mediaLinks": [ "https://raw.githubusercontent.com/cloudron-io/lamp-app/master/medialinks/medialink_0.jpg" ],
+  "changelog": "file://CHANGELOG",
+  "postInstallMessage": "file://POSTINSTALL.md",
+  "minBoxVersion": "6.0.0",
+  "forumUrl": "https://forum.cloudron.io/category/15/lamp",
+  "documentationUrl": "https://cloudron.io/documentation/apps/vscode/"
+}
