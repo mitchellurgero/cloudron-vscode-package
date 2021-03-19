@@ -1,19 +1,8 @@
 [0.1.0]
 - initial version
 
-[0.2.0]
-- Fix typo in post install message
-
-[1.0.0]
-* Update screenshot in manifest
-* Do not show credentials in index.php
-
-[1.1.0]
-* Add mailparse package
-
-[1.2.0]
-* Make apache configs more customizable (/app/data/apache)
-
-[1.3.0]
-* Add LDAP addon
+[0.1.2]
+- Update code-server
+- Fix package requirements
+- Updated to 3.0 base image from Cloudron
 

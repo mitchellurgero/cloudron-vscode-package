@@ -1,6 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-"use strict";const pkg=require("../package.json"),path=require("path"),os=require("os");function getAppDataPath(t){switch(t){case"win32":return process.env.VSCODE_APPDATA||process.env.APPDATA||path.join(process.env.USERPROFILE,"AppData","Roaming");case"darwin":return process.env.VSCODE_APPDATA||path.join(os.homedir(),"Library","Application Support");case"linux":return process.env.VSCODE_APPDATA||process.env.XDG_CONFIG_HOME||path.join(os.homedir(),".config");default:throw new Error("Platform not supported")}}function getDefaultUserDataPath(t){return path.join(getAppDataPath(t),pkg.name)}exports.getAppDataPath=getAppDataPath,exports.getDefaultUserDataPath=getDefaultUserDataPath;
+"use strict";const pkg=require("../package.json"),path=require("path"),os=require("os");function getDefaultUserDataPath(){let e=process.env.VSCODE_APPDATA;if(!e)switch(process.platform){case"win32":if(e=process.env.APPDATA,!e){const r=process.env.USERPROFILE;if(typeof r!="string")throw new Error("Windows: Unexpected undefined %USERPROFILE% environment variable");e=path.join(r,"AppData","Roaming")}break;case"darwin":e=path.join(os.homedir(),"Library","Application Support");break;case"linux":e=process.env.XDG_CONFIG_HOME||path.join(os.homedir(),".config");break;default:throw new Error("Platform not supported")}return path.join(e,pkg.name)}exports.getDefaultUserDataPath=getDefaultUserDataPath;
+
 //# sourceMappingURL=paths.js.map

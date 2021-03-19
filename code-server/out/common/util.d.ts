@@ -40,3 +40,4 @@ export declare const arrayify: <T>(value?: T | T[] | undefined) => T[];
  * Get the first string. If there's no string return undefined.
  */
 export declare const getFirstString: (value: string | string[] | object | undefined) => string | undefined;
+export declare function logError(prefix: string, err: any): void;

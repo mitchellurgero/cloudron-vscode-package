@@ -19,16 +19,21 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rootPath = exports.commit = exports.version = void 0;
+exports.rootPath = exports.commit = exports.version = exports.getPackageJson = void 0;
 var logger_1 = require("@coder/logger");
 var path = __importStar(require("path"));
-var pkg = {};
-try {
-    pkg = require("../../package.json");
+function getPackageJson(relativePath) {
+    var pkg = {};
+    try {
+        pkg = require(relativePath);
+    }
+    catch (error) {
+        logger_1.logger.warn(error.message);
+    }
+    return pkg;
 }
-catch (error) {
-    logger_1.logger.warn(error.message);
-}
+exports.getPackageJson = getPackageJson;
+var pkg = getPackageJson("../../package.json");
 exports.version = pkg.version || "development";
 exports.commit = pkg.commit || "development";
 exports.rootPath = path.resolve(__dirname, "../..");

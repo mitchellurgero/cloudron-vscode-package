@@ -122,6 +122,9 @@ var VscodeProvider = /** @class */ (function () {
                             ])];
                     case 2:
                         startPath = _a.sent();
+                        if (query.ew) {
+                            startPath = undefined;
+                        }
                         settings_1.settings.write({
                             lastVisited: startPath,
                             query: query,
@@ -178,7 +181,7 @@ var VscodeProvider = /** @class */ (function () {
     /**
      * VS Code expects a raw socket. It will handle all the web socket frames.
      */
-    VscodeProvider.prototype.sendWebsocket = function (socket, query) {
+    VscodeProvider.prototype.sendWebsocket = function (socket, query, permessageDeflate) {
         return __awaiter(this, void 0, void 0, function () {
             var vscode, socketProxy;
             return __generator(this, function (_a) {
@@ -192,7 +195,7 @@ var VscodeProvider = /** @class */ (function () {
                         return [4 /*yield*/, this.socketProvider.createProxy(socket)];
                     case 2:
                         socketProxy = _a.sent();
-                        this.send({ type: "socket", query: query }, vscode, socketProxy);
+                        this.send({ type: "socket", query: query, permessageDeflate: permessageDeflate }, vscode, socketProxy);
                         return [2 /*return*/];
                 }
             });

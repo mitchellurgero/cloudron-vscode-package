@@ -38,11 +38,15 @@ var __spread = (this && this.__spread) || function () {
     for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
     return ar;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Router = exports.WebsocketRouter = exports.handleUpgrade = void 0;
+exports.wss = exports.Router = exports.WebsocketRouter = exports.handleUpgrade = void 0;
 var express = __importStar(require("express"));
 var http = __importStar(require("http"));
-exports.handleUpgrade = function (app, server) {
+var ws_1 = __importDefault(require("ws"));
+var handleUpgrade = function (app, server) {
     server.on("upgrade", function (req, socket, head) {
         socket.pause();
         req.ws = socket;
@@ -55,10 +59,15 @@ exports.handleUpgrade = function (app, server) {
         });
     });
 };
+exports.handleUpgrade = handleUpgrade;
 var WebsocketRouter = /** @class */ (function () {
     function WebsocketRouter() {
         this.router = express.Router();
     }
+    /**
+     * Handle a websocket at this route. Note that websockets are immediately
+     * paused when they come in.
+     */
     WebsocketRouter.prototype.ws = function (route) {
         var _a;
         var handlers = [];
@@ -81,4 +90,5 @@ function Router() {
     return new WebsocketRouter();
 }
 exports.Router = Router;
+exports.wss = new ws_1.default.Server({ noServer: true });
 //# sourceMappingURL=wsRouter.js.map

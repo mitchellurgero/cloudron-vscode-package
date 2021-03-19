@@ -1,5 +1,15 @@
 import * as express from "express";
 import * as expressCore from "express-serve-static-core";
+import { DefaultedArgs } from "./cli";
+import { Heart } from "./heart";
+declare global {
+    namespace Express {
+        interface Request {
+            args: DefaultedArgs;
+            heart: Heart;
+        }
+    }
+}
 /**
  * Replace common variable strings in HTML templates.
  */

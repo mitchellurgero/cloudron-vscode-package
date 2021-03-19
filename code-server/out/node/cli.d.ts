@@ -50,7 +50,7 @@ export interface Args extends VsArgs {
 }
 export declare const optionDescriptions: () => string[];
 export declare const parse: (argv: string[], opts?: {
-    configFile: string;
+    configFile?: string | undefined;
 } | undefined) => Args;
 export interface DefaultedArgs extends ConfigArgs {
     auth: AuthType;
@@ -81,6 +81,11 @@ interface ConfigArgs extends Args {
  * @param configPath Read the config from configPath instead of $CODE_SERVER_CONFIG or the default.
  */
 export declare function readConfigFile(configPath?: string): Promise<ConfigArgs>;
+/**
+ * parseConfigFile parses configFile into ConfigArgs.
+ * configPath is used as the filename in error messages
+ */
+export declare function parseConfigFile(configFile: string, configPath: string): ConfigArgs;
 export declare const shouldRunVsCodeCli: (args: Args) => boolean;
 /**
  * Determine if it looks like the user is trying to open a file or folder in an

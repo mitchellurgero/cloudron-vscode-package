@@ -97,14 +97,43 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PluginAPI = void 0;
+exports.PluginAPI = exports.codeServer = void 0;
 var logger_1 = require("@coder/logger");
+var express = __importStar(require("express"));
 var fs = __importStar(require("fs"));
 var path = __importStar(require("path"));
 var semver = __importStar(require("semver"));
+var http_1 = require("../common/http");
 var constants_1 = require("./constants");
+var http_2 = require("./http");
+var proxy_1 = require("./proxy");
 var util = __importStar(require("./util"));
+var wsRouter_1 = require("./wsRouter");
 var fsp = fs.promises;
+/**
+ * Inject code-server when `require`d. This is required because the API provides
+ * more than just types so these need to be provided at run-time.
+ */
+var originalLoad = require("module")._load;
+require("module")._load = function (request, parent, isMain) {
+    return request === "code-server" ? exports.codeServer : originalLoad.apply(this, [request, parent, isMain]);
+};
+/**
+ * The module you get when importing "code-server".
+ */
+exports.codeServer = {
+    HttpCode: http_1.HttpCode,
+    HttpError: http_1.HttpError,
+    Level: logger_1.Level,
+    authenticated: http_2.authenticated,
+    ensureAuthenticated: http_2.ensureAuthenticated,
+    express: express,
+    field: logger_1.field,
+    proxy: proxy_1.proxy,
+    replaceTemplates: http_2.replaceTemplates,
+    WsRouter: wsRouter_1.Router,
+    wss: wsRouter_1.wss,
+};
 /**
  * PluginAPI implements the plugin API described in typings/pluginapi.d.ts
  * Please see that file for details.
@@ -114,11 +143,13 @@ var PluginAPI = /** @class */ (function () {
     /**
      * These correspond to $CS_PLUGIN_PATH and $CS_PLUGIN respectively.
      */
-    csPlugin, csPluginPath) {
+    csPlugin, csPluginPath, workingDirectory) {
         if (csPlugin === void 0) { csPlugin = ""; }
         if (csPluginPath === void 0) { csPluginPath = path.join(util.paths.data, "plugins") + ":/usr/share/code-server/plugins"; }
+        if (workingDirectory === void 0) { workingDirectory = undefined; }
         this.csPlugin = csPlugin;
         this.csPluginPath = csPluginPath;
+        this.workingDirectory = workingDirectory;
         this.plugins = new Map();
         this.logger = logger.named("pluginapi");
     }
@@ -197,17 +228,19 @@ var PluginAPI = /** @class */ (function () {
         });
     };
     /**
-     * mount mounts all plugin routers onto r.
+     * mount mounts all plugin routers onto r and websocket routers onto wr.
      */
-    PluginAPI.prototype.mount = function (r) {
+    PluginAPI.prototype.mount = function (r, wr) {
         var e_2, _a;
         try {
             for (var _b = __values(this.plugins), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read(_c.value, 2), p = _d[1];
-                if (!p.router) {
-                    continue;
+                if (p.router) {
+                    r.use("" + p.routerPath, p.router());
                 }
-                r.use("" + p.routerPath, p.router());
+                if (p.wsRouter) {
+                    wr.use("" + p.routerPath, p.wsRouter().router);
+                }
             }
         }
         catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -222,7 +255,8 @@ var PluginAPI = /** @class */ (function () {
      * loadPlugins loads all plugins based on this.csPlugin,
      * this.csPluginPath and the built in plugins.
      */
-    PluginAPI.prototype.loadPlugins = function () {
+    PluginAPI.prototype.loadPlugins = function (loadBuiltin) {
+        if (loadBuiltin === void 0) { loadBuiltin = true; }
         return __awaiter(this, void 0, void 0, function () {
             var _a, _b, dir, e_3_1, _c, _d, dir, e_4_1;
             var e_3, _e, e_4, _f;
@@ -284,13 +318,13 @@ var PluginAPI = /** @class */ (function () {
                         }
                         finally { if (e_4) throw e_4.error; }
                         return [7 /*endfinally*/];
-                    case 14: 
-                    // Built-in plugins.
-                    return [4 /*yield*/, this._loadPlugins(path.join(__dirname, "../../plugins"))];
+                    case 14:
+                        if (!loadBuiltin) return [3 /*break*/, 16];
+                        return [4 /*yield*/, this._loadPlugins(path.join(__dirname, "../../plugins"))];
                     case 15:
-                        // Built-in plugins.
                         _g.sent();
-                        return [2 /*return*/];
+                        _g.label = 16;
+                    case 16: return [2 /*return*/];
                 }
             });
         });
@@ -433,7 +467,7 @@ var PluginAPI = /** @class */ (function () {
         if (!p.routerPath) {
             throw new Error("plugin missing router path");
         }
-        if (!p.routerPath.startsWith("/") || p.routerPath.length < 2) {
+        if (!p.routerPath.startsWith("/")) {
             throw new Error("plugin router path " + q(p.routerPath) + ": invalid");
         }
         if (!p.homepageURL) {
@@ -441,9 +475,45 @@ var PluginAPI = /** @class */ (function () {
         }
         p.init({
             logger: logger,
+            workingDirectory: this.workingDirectory,
         });
         logger.debug("loaded");
         return p;
+    };
+    PluginAPI.prototype.dispose = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, Promise.all(Array.from(this.plugins.values()).map(function (p) { return __awaiter(_this, void 0, void 0, function () {
+                            var error_1;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        if (!p.deinit) {
+                                            return [2 /*return*/];
+                                        }
+                                        _a.label = 1;
+                                    case 1:
+                                        _a.trys.push([1, 3, , 4]);
+                                        return [4 /*yield*/, p.deinit()];
+                                    case 2:
+                                        _a.sent();
+                                        return [3 /*break*/, 4];
+                                    case 3:
+                                        error_1 = _a.sent();
+                                        this.logger.error("plugin failed to deinit", logger_1.field("name", p.name), logger_1.field("error", error_1.message));
+                                        return [3 /*break*/, 4];
+                                    case 4: return [2 /*return*/];
+                                }
+                            });
+                        }); }))];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
     };
     return PluginAPI;
 }());

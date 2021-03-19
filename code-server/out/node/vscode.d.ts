@@ -13,7 +13,7 @@ export declare class VscodeProvider {
     /**
      * VS Code expects a raw socket. It will handle all the web socket frames.
      */
-    sendWebsocket(socket: net.Socket, query: ipc.Query): Promise<void>;
+    sendWebsocket(socket: net.Socket, query: ipc.Query, permessageDeflate: boolean): Promise<void>;
     private send;
     /**
      * Choose the first non-empty path from the provided array.

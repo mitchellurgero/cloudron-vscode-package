@@ -1,15 +1,115 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-!function(){"use strict";const t=navigator.vendor&&navigator.vendor.indexOf("Apple")>-1&&navigator.userAgent&&-1===navigator.userAgent.indexOf("CriOS")&&-1===navigator.userAgent.indexOf("FxiOS"),e=({onFocus:t,onBlur:e})=>{let n=document.hasFocus();setInterval(()=>{const o=document.hasFocus();o!==n&&(n=o,o?t():e())},50)
-},n=()=>document.getElementById("active-frame"),o=()=>document.getElementById("pending-frame"),r="\n\tbody {\n\t\tbackground-color: transparent;\n\t\tcolor: var(--vscode-editor-foreground);\n\t\tfont-family: var(--vscode-font-family);\n\t\tfont-weight: var(--vscode-font-weight);\n\t\tfont-size: var(--vscode-font-size);\n\t\tmargin: 0;\n\t\tpadding: 0 20px;\n\t}\n\n\timg {\n\t\tmax-width: 100%;\n\t\tmax-height: 100%;\n\t}\n\n\ta {\n\t\tcolor: var(--vscode-textLink-foreground);\n\t}\n\n\ta:hover {\n\t\tcolor: var(--vscode-textLink-activeForeground);\n\t}\n\n\ta:focus,\n\tinput:focus,\n\tselect:focus,\n\ttextarea:focus {\n\t\toutline: 1px solid -webkit-focus-ring-color;\n\t\toutline-offset: -1px;\n\t}\n\n\tcode {\n\t\tcolor: var(--vscode-textPreformat-foreground);\n\t}\n\n\tblockquote {\n\t\tbackground: var(--vscode-textBlockQuote-background);\n\t\tborder-color: var(--vscode-textBlockQuote-border);\n\t}\n\n\tkbd {\n\t\tcolor: var(--vscode-editor-foreground);\n\t\tborder-radius: 3px;\n\t\tvertical-align: middle;\n\t\tpadding: 1px 3px;\n\n\t\tbackground-color: hsla(0,0%,50%,.17);\n\t\tborder: 1px solid rgba(71,71,71,.4);\n\t\tborder-bottom-color: rgba(88,88,88,.4);\n\t\tbox-shadow: inset 0 -1px 0 rgba(88,88,88,.4);\n\t}\n\t.vscode-light kbd {\n\t\tbackground-color: hsla(0,0%,87%,.5);\n\t\tborder: 1px solid hsla(0,0%,80%,.7);\n\t\tborder-bottom-color: hsla(0,0%,73%,.7);\n\t\tbox-shadow: inset 0 -1px 0 hsla(0,0%,73%,.7);\n\t}\n\n\t::-webkit-scrollbar {\n\t\twidth: 10px;\n\t\theight: 10px;\n\t}\n\n\t::-webkit-scrollbar-corner {\n\t\tbackground-color: var(--vscode-editor-background);\n\t}\n\n\t::-webkit-scrollbar-thumb {\n\t\tbackground-color: var(--vscode-scrollbarSlider-background);\n\t}\n\t::-webkit-scrollbar-thumb:hover {\n\t\tbackground-color: var(--vscode-scrollbarSlider-hoverBackground);\n\t}\n\t::-webkit-scrollbar-thumb:active {\n\t\tbackground-color: var(--vscode-scrollbarSlider-activeBackground);\n\t}"
-;function a(a){let s,i=!0,c=[];const d={initialScrollProgress:void 0},l=(t,e)=>{if(t&&(e&&(e.classList.remove("vscode-light","vscode-dark","vscode-high-contrast"),e.classList.add(d.activeTheme),e.dataset.vscodeThemeKind=d.activeTheme,e.dataset.vscodeThemeName=d.themeName||""),d.styles)){const e=t.documentElement.style;for(let t=e.length-1;t>=0;t--){const n=e[t];n&&n.startsWith("--vscode-")&&e.removeProperty(n)}for(const t of Object.keys(d.styles))e.setProperty(`--${t}`,d.styles[t])}},u=t=>{if(!t||!t.view||!t.view.document)return;let e=t.view.document.getElementsByTagName("base")[0],n=t.target;for(;n;){if(n.tagName&&"a"===n.tagName.toLowerCase()&&n.href){if("#"===n.getAttribute("href"))t.view.scrollTo(0,0);else if(n.hash&&(n.getAttribute("href")===n.hash||e&&n.href.indexOf(e.href)>=0)){let e=t.view.document.getElementById(n.hash.substr(1,n.hash.length-1));e&&e.scrollIntoView()}else a.postMessage("did-click-link",n.href.baseVal||n.href);t.preventDefault();break}n=n.parentNode}},m=t=>{
-if(t.view&&t.view.document&&1===t.button){let e=t.target;for(;e;){if(e.tagName&&"a"===e.tagName.toLowerCase()&&e.href){t.preventDefault();break}e=e.parentNode}}},g=t=>{if(function(t){return(t.ctrlKey||t.metaKey)&&["z","y"].includes(t.key)}(t))t.preventDefault();else if(function(t){return(t.ctrlKey||t.metaKey)&&["c","v","x"].includes(t.key)}(t)){if(!a.onElectron)return;t.preventDefault()}a.postMessage("did-keydown",{key:t.key,keyCode:t.keyCode,code:t.code,shiftKey:t.shiftKey,altKey:t.altKey,ctrlKey:t.ctrlKey,metaKey:t.metaKey,repeat:t.repeat})};let f=!1;const v=t=>{f||a.postMessage("did-scroll-wheel",{deltaMode:t.deltaMode,deltaX:t.deltaX,deltaY:t.deltaY,deltaZ:t.deltaZ,detail:t.detail,type:t.type})},b=t=>{if(!t.target||!t.target.body)return;if(f)return;const e=t.currentTarget.scrollY/t.target.body.clientHeight;isNaN(e)||(f=!0,window.requestAnimationFrame(()=>{try{a.postMessage("did-scroll",e)}catch(t){}f=!1}))};function h(t){const e=t.options,n=t.contents,o=(new DOMParser).parseFromString(n,"text/html")
-;if(o.querySelectorAll("a").forEach(t=>{t.title||(t.title=t.getAttribute("href"))}),e.allowScripts){const n=o.createElement("script");n.id="_vscodeApiScript",n.textContent=function(t,e){const n=e?encodeURIComponent(e):void 0
-;return`\n\t\t\tglobalThis.acquireVsCodeApi = (function() {\n\t\t\t\tconst originalPostMessage = window.parent.postMessage.bind(window.parent);\n\t\t\t\tconst targetOrigin = '*';\n\t\t\t\tlet acquired = false;\n\n\t\t\t\tlet state = ${e?`JSON.parse(decodeURIComponent("${n}"))`:void 0};\n\n\t\t\t\treturn () => {\n\t\t\t\t\tif (acquired && !${t}) {\n\t\t\t\t\t\tthrow new Error('An instance of the VS Code API has already been acquired');\n\t\t\t\t\t}\n\t\t\t\t\tacquired = true;\n\t\t\t\t\treturn Object.freeze({\n\t\t\t\t\t\tpostMessage: function(msg) {\n\t\t\t\t\t\t\treturn originalPostMessage({ command: 'onmessage', data: msg }, targetOrigin);\n\t\t\t\t\t\t},\n\t\t\t\t\t\tsetState: function(newState) {\n\t\t\t\t\t\t\tstate = newState;\n\t\t\t\t\t\t\toriginalPostMessage({ command: 'do-update-state', data: JSON.stringify(newState) }, targetOrigin);\n\t\t\t\t\t\t\treturn newState;\n\t\t\t\t\t\t},\n\t\t\t\t\t\tgetState: function() {\n\t\t\t\t\t\t\treturn state;\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t};\n\t\t\t})();\n\t\t\tdelete window.parent;\n\t\t\tdelete window.top;\n\t\t\tdelete window.frameElement;\n\t\t`
-}(e.allowMultipleAPIAcquire,t.state),o.head.prepend(n)}const s=o.createElement("style");s.id="_defaultStyles",s.textContent=r,o.head.prepend(s),l(o,o.body);const i=o.querySelector('meta[http-equiv="Content-Security-Policy"]');if(i)try{i.setAttribute("content",a.rewriteCSP(i.getAttribute("content"),t.endpoint))}catch(t){console.error(`Could not rewrite csp: ${t}`)}else a.postMessage("no-csp-found");return"<!DOCTYPE html>\n"+o.documentElement.outerHTML}document.addEventListener("DOMContentLoaded",()=>{const r=document.location.search.match(/\bid=([\w-]+)/),f=r?r[1]:void 0;if(!document.body)return;a.onMessage("styles",(t,e)=>{d.styles=e.styles,d.activeTheme=e.activeTheme,d.themeName=e.themeName;const o=n();o&&o.contentDocument&&l(o.contentDocument,o.contentDocument.body)}),a.onMessage("focus",()=>{const t=n();t&&t.contentWindow.focus()});let p=0;a.onMessage("content",async(e,r)=>{const w=++p;if(await a.ready,w!==p)return;const y=r.options,k=h(r),x=n(),M=i;let S;if(i)i=!1,S=(t,e)=>{
-isNaN(d.initialScrollProgress)||0===e.scrollY&&e.scroll(0,t.clientHeight*d.initialScrollProgress)};else{const t=x&&x.contentDocument&&x.contentDocument.body?x.contentWindow.scrollY:0;S=(e,n)=>{0===n.scrollY&&n.scroll(0,t)}}const L=o();L&&(L.setAttribute("id",""),document.body.removeChild(L)),M||(c=[]);const D=document.createElement("iframe");function E(t){setTimeout(()=>{a.fakeLoad&&(t.open(),t.write(k),t.close(),A(D)),t&&l(t,t.body)},0)}if(D.setAttribute("id","pending-frame"),D.setAttribute("frameborder","0"),D.setAttribute("sandbox",y.allowScripts?"allow-scripts allow-forms allow-same-origin allow-pointer-lock allow-downloads":"allow-same-origin allow-pointer-lock"),a.fakeLoad&&(D.src=`./fake.html?id=${f}`),D.style.cssText="display: block; margin: 0; overflow: hidden; position: absolute; width: 100%; height: 100%; visibility: hidden",document.body.appendChild(D),a.fakeLoad||D.contentDocument.open(),a.fakeLoad&&!y.allowScripts&&t){const t=setInterval(()=>{
-D.parentElement?"loading"!==D.contentDocument.readyState&&(clearInterval(t),E(D.contentDocument)):clearInterval(t)},10)}else D.contentWindow.addEventListener("DOMContentLoaded",t=>{E(t.target?t.target:void 0)});const C=(t,e)=>{t&&t.body&&S(t.body,e);const r=o();if(r&&r.contentDocument&&r.contentDocument===t){const t=n();t&&document.body.removeChild(t),l(r.contentDocument,r.contentDocument.body),r.setAttribute("id","active-frame"),r.style.visibility="visible",a.focusIframeOnCreate&&r.contentWindow.focus(),e.addEventListener("scroll",b),e.addEventListener("wheel",v),c.forEach(t=>{e.postMessage(t,"*")}),c=[]}a.postMessage("did-load")};function A(t){clearTimeout(s),s=void 0,s=setTimeout(()=>{clearTimeout(s),s=void 0,C(t.contentDocument,t.contentWindow)},200),t.contentWindow.addEventListener("load",(function(t){const e=t.target;s&&(clearTimeout(s),s=void 0,C(e,this))})),t.contentWindow.addEventListener("click",u),t.contentWindow.addEventListener("auxclick",m),t.contentWindow.addEventListener("keydown",g),
-t.contentWindow.addEventListener("contextmenu",t=>t.preventDefault()),a.onIframeLoaded&&a.onIframeLoaded(t)}a.fakeLoad||A(D),a.fakeLoad||(D.contentDocument.write(k),D.contentDocument.close()),a.postMessage("did-set-content",void 0)}),a.onMessage("message",(t,e)=>{if(!o()){const t=n();if(t)return void t.contentWindow.postMessage(e,"*")}c.push(e)}),a.onMessage("initial-scroll-position",(t,e)=>{d.initialScrollProgress=e}),a.onMessage("execCommand",(t,e)=>{const o=n();o&&o.contentDocument.execCommand(e)}),e({onFocus:()=>a.postMessage("did-focus"),onBlur:()=>a.postMessage("did-blur")}),a.postMessage("webview-ready",{})})}"undefined"!=typeof module?module.exports=a:window.createWebviewManager=a}();
+(function(){"use strict";const D=navigator.vendor&&navigator.vendor.indexOf("Apple")>-1&&navigator.userAgent&&navigator.userAgent.indexOf("CriOS")===-1&&navigator.userAgent.indexOf("FxiOS")===-1,I=({onFocus:t,onBlur:m})=>{const g=50;let p=document.hasFocus();setInterval(()=>{const s=document.hasFocus();s!==p&&(p=s,s?t():m())},g)},b=()=>document.getElementById("active-frame"),h=()=>document.getElementById("pending-frame"),O=`
+	html {
+		scrollbar-color: var(--vscode-scrollbarSlider-background) var(--vscode-editor-background);
+	}
+
+	body {
+		background-color: transparent;
+		color: var(--vscode-editor-foreground);
+		font-family: var(--vscode-font-family);
+		font-weight: var(--vscode-font-weight);
+		font-size: var(--vscode-font-size);
+		margin: 0;
+		padding: 0 20px;
+	}
+
+	img {
+		max-width: 100%;
+		max-height: 100%;
+	}
+
+	a {
+		color: var(--vscode-textLink-foreground);
+	}
+
+	a:hover {
+		color: var(--vscode-textLink-activeForeground);
+	}
+
+	a:focus,
+	input:focus,
+	select:focus,
+	textarea:focus {
+		outline: 1px solid -webkit-focus-ring-color;
+		outline-offset: -1px;
+	}
+
+	code {
+		color: var(--vscode-textPreformat-foreground);
+	}
+
+	blockquote {
+		background: var(--vscode-textBlockQuote-background);
+		border-color: var(--vscode-textBlockQuote-border);
+	}
+
+	kbd {
+		color: var(--vscode-editor-foreground);
+		border-radius: 3px;
+		vertical-align: middle;
+		padding: 1px 3px;
+
+		background-color: hsla(0,0%,50%,.17);
+		border: 1px solid rgba(71,71,71,.4);
+		border-bottom-color: rgba(88,88,88,.4);
+		box-shadow: inset 0 -1px 0 rgba(88,88,88,.4);
+	}
+	.vscode-light kbd {
+		background-color: hsla(0,0%,87%,.5);
+		border: 1px solid hsla(0,0%,80%,.7);
+		border-bottom-color: hsla(0,0%,73%,.7);
+		box-shadow: inset 0 -1px 0 hsla(0,0%,73%,.7);
+	}
+
+	::-webkit-scrollbar {
+		width: 10px;
+		height: 10px;
+	}
+
+	::-webkit-scrollbar-corner {
+		background-color: var(--vscode-editor-background);
+	}
+
+	::-webkit-scrollbar-thumb {
+		background-color: var(--vscode-scrollbarSlider-background);
+	}
+	::-webkit-scrollbar-thumb:hover {
+		background-color: var(--vscode-scrollbarSlider-hoverBackground);
+	}
+	::-webkit-scrollbar-thumb:active {
+		background-color: var(--vscode-scrollbarSlider-activeBackground);
+	}`;function P(t,m){const g=m?encodeURIComponent(m):void 0;return`
+			globalThis.acquireVsCodeApi = (function() {
+				const originalPostMessage = window.parent.postMessage.bind(window.parent);
+				const targetOrigin = '*';
+				let acquired = false;
+
+				let state = ${m?`JSON.parse(decodeURIComponent("${g}"))`:void 0};
+
+				return () => {
+					if (acquired && !${t}) {
+						throw new Error('An instance of the VS Code API has already been acquired');
+					}
+					acquired = true;
+					return Object.freeze({
+						postMessage: function(msg) {
+							return originalPostMessage({ command: 'onmessage', data: msg }, targetOrigin);
+						},
+						setState: function(newState) {
+							state = newState;
+							originalPostMessage({ command: 'do-update-state', data: JSON.stringify(newState) }, targetOrigin);
+							return newState;
+						},
+						getState: function() {
+							return state;
+						}
+					});
+				};
+			})();
+			delete window.parent;
+			delete window.top;
+			delete window.frameElement;
+		`}function S(t){let m=!0,g,p=[];const s={initialScrollProgress:void 0},v=(e,a)=>{if(!!e&&(a&&(a.classList.remove("vscode-light","vscode-dark","vscode-high-contrast"),a.classList.add(s.activeTheme),a.dataset.vscodeThemeKind=s.activeTheme,a.dataset.vscodeThemeName=s.themeName||""),s.styles)){const r=e.documentElement.style;for(let n=r.length-1;n>=0;n--){const i=r[n];i&&i.startsWith("--vscode-")&&r.removeProperty(i)}for(const n of Object.keys(s.styles))r.setProperty(`--${n}`,s.styles[n])}},T=e=>{if(!(!e||!e.view||!e.view.document)){let a=e.view.document.getElementsByTagName("base")[0],r=e.target;for(;r;){if(r.tagName&&r.tagName.toLowerCase()==="a"&&r.href){if(r.getAttribute("href")==="#")e.view.scrollTo(0,0);else if(r.hash&&(r.getAttribute("href")===r.hash||a&&r.href.indexOf(a.href)>=0)){let n=e.view.document.getElementById(r.hash.substr(1,r.hash.length-1));n&&n.scrollIntoView()}else t.postMessage("did-click-link",r.href.baseVal||r.href);e.preventDefault();break}r=r.parentNode}}},N=e=>{if(!(!e.view||!e.view.document)&&e.button===1){let a=e.target;for(;a;){if(a.tagName&&a.tagName.toLowerCase()==="a"&&a.href){e.preventDefault();break}a=a.parentNode}}},K=e=>{if(F(e))e.preventDefault();else if(W(e))if(t.onElectron)e.preventDefault();else return;t.postMessage("did-keydown",{key:e.key,keyCode:e.keyCode,code:e.code,shiftKey:e.shiftKey,altKey:e.altKey,ctrlKey:e.ctrlKey,metaKey:e.metaKey,repeat:e.repeat})};function W(e){const a=e.ctrlKey||e.metaKey,r=e.shiftKey&&e.key.toLowerCase()==="insert";return a&&["c","v","x"].includes(e.key.toLowerCase())||r}function F(e){return(e.ctrlKey||e.metaKey)&&["z","y"].includes(e.key.toLowerCase())}let w=!1;const q=e=>{w||t.postMessage("did-scroll-wheel",{deltaMode:e.deltaMode,deltaX:e.deltaX,deltaY:e.deltaY,deltaZ:e.deltaZ,detail:e.detail,type:e.type})},B=e=>{if(!(!e.target||!e.target.body)&&!w){const a=e.currentTarget.scrollY/e.target.body.clientHeight;isNaN(a)||(w=!0,window.requestAnimationFrame(()=>{try{t.postMessage("did-scroll",a)}catch(r){}w=!1}))}};function Y(e){const a=e.options,r=e.contents,n=new DOMParser().parseFromString(r,"text/html");if(n.querySelectorAll("a").forEach(c=>{c.title||(c.title=c.getAttribute("href"))}),a.allowScripts){const c=n.createElement("script");c.id="_vscodeApiScript",c.textContent=P(a.allowMultipleAPIAcquire,e.state),n.head.prepend(c)}const i=n.createElement("style");i.id="_defaultStyles",i.textContent=O,n.head.prepend(i),v(n,n.body);const l=n.querySelector('meta[http-equiv="Content-Security-Policy"]');if(!l)t.postMessage("no-csp-found");else try{l.setAttribute("content",t.rewriteCSP(l.getAttribute("content"),e.endpoint))}catch(c){console.error(`Could not rewrite csp: ${c}`)}return`<!DOCTYPE html>
+`+n.documentElement.outerHTML}document.addEventListener("DOMContentLoaded",()=>{const e=document.location.search.match(/\bid=([\w-]+)/),a=e?e[1]:void 0;if(!!document.body){t.onMessage("styles",(n,i)=>{s.styles=i.styles,s.activeTheme=i.activeTheme,s.themeName=i.themeName;const l=b();!l||l.contentDocument&&v(l.contentDocument,l.contentDocument.body)}),t.onMessage("focus",()=>{const n=b();!n||!n.contentWindow||document.activeElement!==n&&n.contentWindow.focus()});let r=0;t.onMessage("content",async(n,i)=>{const l=++r;if(await t.ready,l===r){const c=i.options,M=Y(i),y=b(),_=m;let k;if(m)m=!1,k=(o,u)=>{isNaN(s.initialScrollProgress)||u.scrollY===0&&u.scroll(0,o.clientHeight*s.initialScrollProgress)};else{const o=y&&y.contentDocument&&y.contentDocument.body?y.contentWindow.scrollY:0;k=(u,f)=>{f.scrollY===0&&f.scroll(0,o)}}const x=h();x&&(x.setAttribute("id",""),document.body.removeChild(x)),_||(p=[]);const d=document.createElement("iframe");d.setAttribute("id","pending-frame"),d.setAttribute("frameborder","0"),d.setAttribute("sandbox",c.allowScripts?"allow-scripts allow-forms allow-same-origin allow-pointer-lock allow-downloads":"allow-same-origin allow-pointer-lock"),t.fakeLoad&&(d.src=`./fake.html?id=${a}`),d.style.cssText="display: block; margin: 0; overflow: hidden; position: absolute; width: 100%; height: 100%; visibility: hidden",document.body.appendChild(d),t.fakeLoad||d.contentDocument.open();function C(o){setTimeout(()=>{t.fakeLoad&&(o.open(),o.write(M),o.close(),E(d)),o&&v(o,o.body)},0)}if(t.fakeLoad&&!c.allowScripts&&D){const o=setInterval(()=>{if(!d.parentElement){clearInterval(o);return}d.contentDocument.readyState!=="loading"&&(clearInterval(o),C(d.contentDocument))},10)}else d.contentWindow.addEventListener("DOMContentLoaded",o=>{const u=o.target?o.target:void 0;C(u)});const L=(o,u)=>{o&&o.body&&k(o.body,u);const f=h();if(f&&f.contentDocument&&f.contentDocument===o){const A=b();A&&document.body.removeChild(A),v(f.contentDocument,f.contentDocument.body),f.setAttribute("id","active-frame"),f.style.visibility="visible",t.focusIframeOnCreate&&f.contentWindow.focus(),u.addEventListener("scroll",B),u.addEventListener("wheel",q),p.forEach(H=>{u.postMessage(H,"*")}),p=[]}t.postMessage("did-load")};function E(o){clearTimeout(g),g=void 0,g=setTimeout(()=>{clearTimeout(g),g=void 0,L(o.contentDocument,o.contentWindow)},200),o.contentWindow.addEventListener("load",function(u){const f=u.target;g&&(clearTimeout(g),g=void 0,L(f,this))}),o.contentWindow.addEventListener("click",T),o.contentWindow.addEventListener("auxclick",N),o.contentWindow.addEventListener("keydown",K),o.contentWindow.addEventListener("contextmenu",u=>u.preventDefault()),t.onIframeLoaded&&t.onIframeLoaded(o)}t.fakeLoad||E(d),t.fakeLoad||(d.contentDocument.write(M),d.contentDocument.close()),t.postMessage("did-set-content",void 0)}}),t.onMessage("message",(n,i)=>{if(!h()){const c=b();if(c){c.contentWindow.postMessage(i,"*");return}}p.push(i)}),t.onMessage("initial-scroll-position",(n,i)=>{s.initialScrollProgress=i}),t.onMessage("execCommand",(n,i)=>{const l=b();!l||l.contentDocument.execCommand(i)}),I({onFocus:()=>t.postMessage("did-focus"),onBlur:()=>t.postMessage("did-blur")}),t.postMessage("webview-ready",{})}})}typeof module!="undefined"?module.exports=S:window.createWebviewManager=S})();
+
 //# sourceMappingURL=main.js.map

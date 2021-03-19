@@ -279,9 +279,7 @@ var ParentProcess = /** @class */ (function (_super) {
         };
         _this.logStdoutStream = rfs.createStream(path.join(util_1.paths.data, "coder-logs", "code-server-stdout.log"), opts);
         _this.logStderrStream = rfs.createStream(path.join(util_1.paths.data, "coder-logs", "code-server-stderr.log"), opts);
-        _this.onDispose(function () {
-            _this.disposeChild();
-        });
+        _this.onDispose(function () { return _this.disposeChild(); });
         _this.onChildMessage(function (message) {
             switch (message.type) {
                 case "relaunch":
@@ -297,11 +295,28 @@ var ParentProcess = /** @class */ (function (_super) {
         return _this;
     }
     ParentProcess.prototype.disposeChild = function () {
-        this.started = undefined;
-        if (this.child) {
-            this.child.removeAllListeners();
-            this.child.kill();
-        }
+        return __awaiter(this, void 0, void 0, function () {
+            var child_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        this.started = undefined;
+                        if (!this.child) return [3 /*break*/, 2];
+                        child_1 = this.child;
+                        child_1.removeAllListeners();
+                        child_1.kill();
+                        // Wait for the child to exit otherwise its output will be lost which can
+                        // be especially problematic if you're trying to debug why cleanup failed.
+                        return [4 /*yield*/, new Promise(function (r) { return child_1.on("exit", r); })];
+                    case 1:
+                        // Wait for the child to exit otherwise its output will be lost which can
+                        // be especially problematic if you're trying to debug why cleanup failed.
+                        _a.sent();
+                        _a.label = 2;
+                    case 2: return [2 /*return*/];
+                }
+            });
+        });
     };
     ParentProcess.prototype.relaunch = function () {
         return __awaiter(this, void 0, void 0, function () {

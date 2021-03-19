@@ -1,8 +1,11 @@
 # code-server &middot; [!["GitHub Discussions"](https://img.shields.io/badge/%20GitHub-%20Discussions-gray.svg?longCache=true&logo=github&colorB=purple)](https://github.com/cdr/code-server/discussions) [!["Join us on Slack"](https://img.shields.io/badge/join-us%20on%20slack-gray.svg?longCache=true&logo=slack&colorB=brightgreen)](https://cdr.co/join-community) [![Twitter Follow](https://img.shields.io/twitter/follow/CoderHQ?label=%40CoderHQ&style=social)](https://twitter.com/coderhq)
 
+![Lines](https://img.shields.io/badge/Coverage-51.67%25-green.svg)
+[![See latest docs](https://img.shields.io/static/v1?label=Docs&message=see%20latest%20&color=blue)](https://github.com/cdr/code-server/tree/v3.9.1/docs)
+
 Run [VS Code](https://github.com/Microsoft/vscode) on any machine anywhere and access it in the browser.
 
-![Screenshot](./doc/assets/screenshot.png)
+![Screenshot](./docs/assets/screenshot.png)
 
 ## Highlights
 
@@ -10,12 +13,21 @@ Run [VS Code](https://github.com/Microsoft/vscode) on any machine anywhere and a
 - Use cloud servers to speed up tests, compilations, downloads, and more
 - Preserve battery life when you're on the go; all intensive tasks run on your server
 
+## Requirements
+
+For a good experience, we recommend at least:
+
+- 1 GB of RAM
+- 2 cores
+
+You can use whatever linux distribution floats your boat but in our [guide](./docs/guide.md) we assume Debian on Google Cloud.
+
 ## Getting Started
 
 There are two ways to get started:
 
 1. Using the [install script](./install.sh), which automates most of the process. The script uses the system package manager (if possible)
-2. Manually installing code-server; see [Installation](./doc/install.md) for instructions applicable to most use cases
+2. Manually installing code-server; see [Installation](./docs/install.md) for instructions applicable to most use cases
 
 If you choose to use the install script, you can preview what occurs during the install process:
 
@@ -31,7 +43,7 @@ curl -fsSL https://code-server.dev/install.sh | sh
 
 When done, the install script prints out instructions for running and starting code-server.
 
-We also have an in-depth [setup and configuration](./doc/guide.md) guide.
+We also have an in-depth [setup and configuration](./docs/guide.md) guide.
 
 ### Cloud Program ☁️
 
@@ -49,11 +61,11 @@ Proxying code-server to Coder Cloud, you can access your IDE at https://valmar-j
 
 ## FAQ
 
-See [./doc/FAQ.md](./doc/FAQ.md).
+See [./docs/FAQ.md](./docs/FAQ.md).
 
 ## Want to help?
 
-See [CONTRIBUTING](./doc/CONTRIBUTING.md) for details.
+See [CONTRIBUTING](./docs/CONTRIBUTING.md) for details.
 
 ## Hiring
 

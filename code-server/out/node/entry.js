@@ -100,7 +100,7 @@ var proxyAgent = __importStar(require("./proxy_agent"));
 var routes_1 = require("./routes");
 var util_2 = require("./util");
 var wrapper_1 = require("./wrapper");
-exports.runVsCodeCli = function (args) {
+var runVsCodeCli = function (args) {
     logger_1.logger.debug("forking vs code cli...");
     var vscode = cp.fork(path.resolve(__dirname, "../../lib/vscode/out/vs/server/fork"), [], {
         env: __assign(__assign({}, process.env), { CODE_SERVER_PARENT_PID: process.pid.toString() }),
@@ -120,7 +120,8 @@ exports.runVsCodeCli = function (args) {
     });
     vscode.on("exit", function (code) { return process.exit(code || 0); });
 };
-exports.openInExistingInstance = function (args, socketPath) { return __awaiter(void 0, void 0, void 0, function () {
+exports.runVsCodeCli = runVsCodeCli;
+var openInExistingInstance = function (args, socketPath) { return __awaiter(void 0, void 0, void 0, function () {
     var pipeArgs, i, fp, vscode;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -176,6 +177,7 @@ exports.openInExistingInstance = function (args, socketPath) { return __awaiter(
         }
     });
 }); };
+exports.openInExistingInstance = openInExistingInstance;
 var main = function (args) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, app, wsApp, server, serverAddress, err_1, openAddress, error_1;
     return __generator(this, function (_b) {

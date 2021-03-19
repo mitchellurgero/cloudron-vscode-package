@@ -26,7 +26,7 @@ var util_2 = require("./util");
 /**
  * Replace common variable strings in HTML templates.
  */
-exports.replaceTemplates = function (req, content, extraOpts) {
+var replaceTemplates = function (req, content, extraOpts) {
     var base = exports.relativeRoot(req);
     var options = __assign({ base: base, csStaticBase: base + "/static/" + constants_1.commit + constants_1.rootPath, logLevel: logger_1.logger.level }, extraOpts);
     return content
@@ -35,10 +35,11 @@ exports.replaceTemplates = function (req, content, extraOpts) {
         .replace(/{{CS_STATIC_BASE}}/g, options.csStaticBase)
         .replace(/"{{OPTIONS}}"/, "'" + JSON.stringify(options) + "'");
 };
+exports.replaceTemplates = replaceTemplates;
 /**
  * Throw an error if not authorized. Call `next` if provided.
  */
-exports.ensureAuthenticated = function (req, _, next) {
+var ensureAuthenticated = function (req, _, next) {
     if (!exports.authenticated(req)) {
         throw new http_1.HttpError("Unauthorized", http_1.HttpCode.Unauthorized);
     }
@@ -46,10 +47,11 @@ exports.ensureAuthenticated = function (req, _, next) {
         next();
     }
 };
+exports.ensureAuthenticated = ensureAuthenticated;
 /**
  * Return true if authenticated via cookies.
  */
-exports.authenticated = function (req) {
+var authenticated = function (req) {
     switch (req.args.auth) {
         case cli_1.AuthType.None:
             return true;
@@ -63,6 +65,7 @@ exports.authenticated = function (req) {
             throw new Error("Unsupported auth type " + req.args.auth);
     }
 };
+exports.authenticated = authenticated;
 /**
  * Get the relative path that will get us to the root of the page. For each
  * slash we need to go up a directory. For example:
@@ -72,15 +75,16 @@ exports.authenticated = function (req) {
  * /foo/bar => ./..
  * /foo/bar/ => ./../..
  */
-exports.relativeRoot = function (req) {
+var relativeRoot = function (req) {
     var depth = (req.originalUrl.split("?", 1)[0].match(/\//g) || []).length;
     return util_1.normalize("./" + (depth > 1 ? "../".repeat(depth - 1) : ""));
 };
+exports.relativeRoot = relativeRoot;
 /**
  * Redirect relatively to `/${to}`. Query variables will be preserved.
  * `override` will merge with the existing query (use `undefined` to unset).
  */
-exports.redirect = function (req, res, to, override) {
+var redirect = function (req, res, to, override) {
     if (override === void 0) { override = {}; }
     var query = Object.assign({}, req.query, override);
     Object.keys(override).forEach(function (key) {
@@ -94,13 +98,14 @@ exports.redirect = function (req, res, to, override) {
     logger_1.logger.debug("redirecting from " + req.originalUrl + " to " + redirectPath);
     res.redirect(redirectPath);
 };
+exports.redirect = redirect;
 /**
  * Get the value that should be used for setting a cookie domain. This will
  * allow the user to authenticate once no matter what sub-domain they use to log
  * in. This will use the highest level proxy domain (e.g. `coder.com` over
  * `test.coder.com` if both are specified).
  */
-exports.getCookieDomain = function (host, proxyDomains) {
+var getCookieDomain = function (host, proxyDomains) {
     var idx = host.lastIndexOf(":");
     host = idx !== -1 ? host.substring(0, idx) : host;
     // If any of these are true we will still set cookies but without an explicit
@@ -137,4 +142,5 @@ exports.getCookieDomain = function (host, proxyDomains) {
     logger_1.logger.debug("got cookie doman", logger_1.field("host", host));
     return host || undefined;
 };
+exports.getCookieDomain = getCookieDomain;
 //# sourceMappingURL=http.js.map

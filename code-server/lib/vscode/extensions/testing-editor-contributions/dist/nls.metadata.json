@@ -1,0 +1,1 @@
+{"extension":{"messages":["Debug {0}","Debug","Debug {0}","{0}/{1} Tests Passed in {2}","{0}/{1} Tests Passed","Passed in {0}","Passed","Failed","Run Tests"],"keys":["tooltip.debug","action.debug","tooltip.debug","tooltip.runStateWithDuration","tooltip.runState","state.passedWithDuration","state.passed","state.failed","action.run"]}}

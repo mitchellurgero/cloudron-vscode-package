@@ -15,4 +15,8 @@ export declare class Heart {
      * activity. Failures are logged as warnings.
      */
     beat(): void;
+    /**
+     * Call to clear any heartbeatTimer for shutdown.
+     */
+    dispose(): void;
 }

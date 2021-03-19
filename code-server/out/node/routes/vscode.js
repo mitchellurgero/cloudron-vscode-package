@@ -280,7 +280,7 @@ exports.router.get("/fetch-callback", http_2.ensureAuthenticated, function (req,
 }); });
 exports.wsRouter = wsRouter_1.Router();
 exports.wsRouter.ws("/", http_2.ensureAuthenticated, function (req) { return __awaiter(void 0, void 0, void 0, function () {
-    var magic, reply;
+    var magic, reply, extensions, permessageDeflate;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -295,7 +295,9 @@ exports.wsRouter.ws("/", http_2.ensureAuthenticated, function (req) { return __a
                     "Connection: Upgrade",
                     "Sec-WebSocket-Accept: " + reply,
                 ].join("\r\n") + "\r\n\r\n");
-                return [4 /*yield*/, vscode.sendWebsocket(req.ws, req.query)];
+                extensions = req.headers["sec-websocket-extensions"];
+                permessageDeflate = extensions ? extensions.includes("permessage-deflate") : false;
+                return [4 /*yield*/, vscode.sendWebsocket(req.ws, req.query, permessageDeflate)];
             case 1:
                 _a.sent();
                 return [2 /*return*/];

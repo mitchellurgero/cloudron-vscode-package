@@ -12,6 +12,7 @@ exports.proxy.on("error", function (error, _, res) {
     res.end(error.message);
 });
 // Intercept the response to rewrite absolute redirects against the base path.
+// Is disabled when the request has no base path which means /absproxy is in use.
 exports.proxy.on("proxyRes", function (res, req) {
     if (res.headers.location && res.headers.location.startsWith("/") && req.base) {
         res.headers.location = req.base + res.headers.location;

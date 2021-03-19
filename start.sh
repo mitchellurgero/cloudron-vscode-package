@@ -30,7 +30,7 @@ fi
 
 [[ ! -f /app/data/apache/mpm_prefork.conf ]] && cp /app/code/apache/mpm_prefork.conf /app/data/apache/mpm_prefork.conf
 [[ ! -f /app/data/apache/app.conf ]] && cp /app/code/apache/app.conf /app/data/apache/app.conf
-[[ ! -f /app/data/apache/code-server.conf ]] && cp /app/code/apache/code-server.conf /app/data/apache/code-server.conf
+## [[ ! -f /app/data/apache/code-server.conf ]] && cp /app/code/apache/code-server.conf /app/data/apache/code-server.conf
 
 # source it so that env vars are persisted
 echo "==> Source custom startup script"
@@ -47,12 +47,12 @@ else
 fi
 
 # phpMyAdmin auth file
-if [[ ! -f /app/data/.phpmyadminauth ]]; then
-    echo "==> Generating phpMyAdmin authentication file"
-    PASSWORD=`pwgen -1 16`
-    htpasswd -cb /app/data/.phpmyadminauth admin "${PASSWORD}"
-    sed -e "s,PASSWORD,${PASSWORD}," /app/code/phpmyadmin_login.template > /app/data/phpmyadmin_login.txt
-fi
+# if [[ ! -f /app/data/.phpmyadminauth ]]; then
+#     echo "==> Generating phpMyAdmin authentication file"
+#     PASSWORD=`pwgen -1 16`
+#     htpasswd -cb /app/data/.phpmyadminauth admin "${PASSWORD}"
+#     sed -e "s,PASSWORD,${PASSWORD}," /app/code/phpmyadmin_login.template > /app/data/phpmyadmin_login.txt
+# fi
 
 echo "==> Creating credentials.txt"
 sed -e "s,\bMYSQL_HOST\b,${CLOUDRON_MYSQL_HOST}," \

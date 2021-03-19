@@ -60,21 +60,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ensureAddress = exports.createApp = void 0;
 var logger_1 = require("@coder/logger");
+var compression_1 = __importDefault(require("compression"));
 var express_1 = __importDefault(require("express"));
 var fs_1 = require("fs");
 var http_1 = __importDefault(require("http"));
 var httpolyglot = __importStar(require("httpolyglot"));
+var util = __importStar(require("../common/util"));
 var wsRouter_1 = require("./wsRouter");
 /**
  * Create an Express app and an HTTP/S server to serve it.
  */
-exports.createApp = function (args) { return __awaiter(void 0, void 0, void 0, function () {
-    var app, server, _a, _b, _c, _d, _e, wsApp;
+var createApp = function (args) { return __awaiter(void 0, void 0, void 0, function () {
+    var app, server, _a, _b, _c, _d, _e, resolved, wsApp;
     var _f;
     return __generator(this, function (_g) {
         switch (_g.label) {
             case 0:
                 app = express_1.default();
+                app.use(compression_1.default());
                 if (!args.cert) return [3 /*break*/, 5];
                 _c = (_b = httpolyglot).createServer;
                 _f = {};
@@ -101,12 +104,25 @@ exports.createApp = function (args) { return __awaiter(void 0, void 0, void 0, f
                 _g.label = 6;
             case 6:
                 server = _a;
-                return [4 /*yield*/, new Promise(function (resolve, reject) { return __awaiter(void 0, void 0, void 0, function () {
-                        var error_1;
+                resolved = false;
+                return [4 /*yield*/, new Promise(function (resolve2, reject) { return __awaiter(void 0, void 0, void 0, function () {
+                        var resolve, error_1;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
-                                    server.on("error", reject);
+                                    resolve = function () {
+                                        resolved = true;
+                                        resolve2();
+                                    };
+                                    server.on("error", function (err) {
+                                        if (!resolved) {
+                                            reject(err);
+                                        }
+                                        else {
+                                            // Promise resolved earlier so this is an unrelated error.
+                                            util.logError("http server error", err);
+                                        }
+                                    });
                                     if (!args.socket) return [3 /*break*/, 5];
                                     _a.label = 1;
                                 case 1:
@@ -140,11 +156,12 @@ exports.createApp = function (args) { return __awaiter(void 0, void 0, void 0, f
         }
     });
 }); };
+exports.createApp = createApp;
 /**
  * Get the address of a server as a string (protocol *is* included) while
  * ensuring there is one (will throw if there isn't).
  */
-exports.ensureAddress = function (server) {
+var ensureAddress = function (server) {
     var addr = server.address();
     if (!addr) {
         throw new Error("server has no address");
@@ -154,4 +171,5 @@ exports.ensureAddress = function (server) {
     }
     return addr;
 };
+exports.ensureAddress = ensureAddress;
 //# sourceMappingURL=app.js.map

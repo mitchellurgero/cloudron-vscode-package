@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.router = void 0;
+exports.router = exports.Cookie = void 0;
 var express_1 = require("express");
 var fs_1 = require("fs");
 var limiter_1 = require("limiter");
@@ -70,7 +70,7 @@ var util_1 = require("../util");
 var Cookie;
 (function (Cookie) {
     Cookie["Key"] = "key";
-})(Cookie || (Cookie = {}));
+})(Cookie = exports.Cookie || (exports.Cookie = {}));
 // RateLimiter wraps around the limiter library for logins.
 // It allows 2 logins every minute and 12 logins every hour.
 var RateLimiter = /** @class */ (function () {

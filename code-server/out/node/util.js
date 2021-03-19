@@ -126,7 +126,7 @@ function humanPath(p) {
     return p.replace(os.homedir(), "~");
 }
 exports.humanPath = humanPath;
-exports.generateCertificate = function (hostname) { return __awaiter(void 0, void 0, void 0, function () {
+var generateCertificate = function (hostname) { return __awaiter(void 0, void 0, void 0, function () {
     var certPath, certKeyPath, checks, pem_1, certs;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -163,7 +163,8 @@ exports.generateCertificate = function (hostname) { return __awaiter(void 0, voi
         }
     });
 }); };
-exports.generatePassword = function (length) {
+exports.generateCertificate = generateCertificate;
+var generatePassword = function (length) {
     if (length === void 0) { length = 24; }
     return __awaiter(void 0, void 0, void 0, function () {
         var buffer;
@@ -179,9 +180,11 @@ exports.generatePassword = function (length) {
         });
     });
 };
-exports.hash = function (str) {
+exports.generatePassword = generatePassword;
+var hash = function (str) {
     return crypto.createHash("sha256").update(str).digest("hex");
 };
+exports.hash = hash;
 var mimeTypes = {
     ".aac": "audio/x-aac",
     ".avi": "video/x-msvideo",
@@ -238,10 +241,11 @@ var mimeTypes = {
     ".wmv": "video/x-ms-wmv",
     ".woff": "application/font-woff",
 };
-exports.getMediaMime = function (filePath) {
+var getMediaMime = function (filePath) {
     return (filePath && mimeTypes[path.extname(filePath)]) || "text/plain";
 };
-exports.isWsl = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.getMediaMime = getMediaMime;
+var isWsl = function () { return __awaiter(void 0, void 0, void 0, function () {
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -256,10 +260,11 @@ exports.isWsl = function () { return __awaiter(void 0, void 0, void 0, function 
         }
     });
 }); };
+exports.isWsl = isWsl;
 /**
  * Try opening a URL using whatever the system has set for opening URLs.
  */
-exports.open = function (url) { return __awaiter(void 0, void 0, void 0, function () {
+var open = function (url) { return __awaiter(void 0, void 0, void 0, function () {
     var args, options, platform, command, proc;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -288,28 +293,32 @@ exports.open = function (url) { return __awaiter(void 0, void 0, void 0, functio
         }
     });
 }); };
+exports.open = open;
 /**
  * For iterating over an enum's values.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-exports.enumToArray = function (t) {
+var enumToArray = function (t) {
     var values = [];
     for (var k in t) {
         values.push(t[k]);
     }
     return values;
 };
+exports.enumToArray = enumToArray;
 /**
  * For displaying all allowed options in an enum.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-exports.buildAllowedMessage = function (t) {
+var buildAllowedMessage = function (t) {
     var values = exports.enumToArray(t);
     return "Allowed value" + (values.length === 1 ? " is" : "s are") + " " + values.map(function (t) { return "'" + t + "'"; }).join(", ");
 };
-exports.isObject = function (obj) {
+exports.buildAllowedMessage = buildAllowedMessage;
+var isObject = function (obj) {
     return !Array.isArray(obj) && typeof obj === "object" && obj !== null;
 };
+exports.isObject = isObject;
 /**
  * Compute `fsPath` for the given uri.
  * Taken from vs/base/common/uri.ts. It's not imported to avoid also importing
@@ -360,7 +369,7 @@ function canConnect(path) {
     });
 }
 exports.canConnect = canConnect;
-exports.isFile = function (path) { return __awaiter(void 0, void 0, void 0, function () {
+var isFile = function (path) { return __awaiter(void 0, void 0, void 0, function () {
     var stat, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -377,4 +386,5 @@ exports.isFile = function (path) { return __awaiter(void 0, void 0, void 0, func
         }
     });
 }); };
+exports.isFile = isFile;
 //# sourceMappingURL=util.js.map

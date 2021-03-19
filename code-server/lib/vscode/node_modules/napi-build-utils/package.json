@@ -1,6 +1,6 @@
 {
   "name": "napi-build-utils",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A set of utilities to assist developers of tools that build N-API native add-ons",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,9 @@
     "prepublishOnly": "npm run test && npm run doc"
   },
   "keywords": [
-    "n-api"
+    "n-api",
+    "prebuild",
+    "prebuild-install"
   ],
   "author": "Jim Schlight",
   "license": "MIT",

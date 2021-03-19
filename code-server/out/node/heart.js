@@ -47,6 +47,14 @@ var Heart = /** @class */ (function () {
             });
         }, this.heartbeatInterval);
     };
+    /**
+     * Call to clear any heartbeatTimer for shutdown.
+     */
+    Heart.prototype.dispose = function () {
+        if (typeof this.heartbeatTimer !== "undefined") {
+            clearTimeout(this.heartbeatTimer);
+        }
+    };
     return Heart;
 }());
 exports.Heart = Heart;

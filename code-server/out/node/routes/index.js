@@ -83,11 +83,12 @@ var heart_1 = require("../heart");
 var http_2 = require("../http");
 var plugin_1 = require("../plugin");
 var util_2 = require("../util");
+var wrapper_1 = require("../wrapper");
 var apps = __importStar(require("./apps"));
 var domainProxy = __importStar(require("./domainProxy"));
 var health = __importStar(require("./health"));
 var login = __importStar(require("./login"));
-var proxy = __importStar(require("./pathProxy"));
+var pathProxy = __importStar(require("./pathProxy"));
 // static is a reserved keyword.
 var _static = __importStar(require("./static"));
 var update = __importStar(require("./update"));
@@ -95,8 +96,8 @@ var vscode = __importStar(require("./vscode"));
 /**
  * Register all routes and middleware.
  */
-exports.register = function (app, wsApp, server, args) { return __awaiter(void 0, void 0, void 0, function () {
-    var heart, common, papi, errorHandler, wsErrorHandler;
+var register = function (app, wsApp, server, args) { return __awaiter(void 0, void 0, void 0, function () {
+    var heart, common, workingDir, pluginApi_1, errorHandler, wsErrorHandler;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -113,12 +114,13 @@ exports.register = function (app, wsApp, server, args) { return __awaiter(void 0
                             })];
                     });
                 }); });
+                server.on("close", function () {
+                    heart.dispose();
+                });
                 app.disable("x-powered-by");
                 wsApp.disable("x-powered-by");
                 app.use(cookie_parser_1.default());
                 wsApp.use(cookie_parser_1.default());
-                app.use(body_parser_1.default.json());
-                app.use(body_parser_1.default.urlencoded({ extended: true }));
                 common = function (req, _, next) {
                     // /healthz|/healthz/ needs to be excluded otherwise health checks will make
                     // it look like code-server is always in use.
@@ -157,11 +159,44 @@ exports.register = function (app, wsApp, server, args) { return __awaiter(void 0
                 }); });
                 app.use("/", domainProxy.router);
                 wsApp.use("/", domainProxy.wsRouter.router);
+                app.all("/proxy/(:port)(/*)?", function (req, res) {
+                    pathProxy.proxy(req, res);
+                });
+                wsApp.get("/proxy/(:port)(/*)?", function (req) {
+                    pathProxy.wsProxy(req);
+                });
+                // These two routes pass through the path directly.
+                // So the proxied app must be aware it is running
+                // under /absproxy/<someport>/
+                app.all("/absproxy/(:port)(/*)?", function (req, res) {
+                    pathProxy.proxy(req, res, {
+                        passthroughPath: true,
+                    });
+                });
+                wsApp.get("/absproxy/(:port)(/*)?", function (req) {
+                    pathProxy.wsProxy(req, {
+                        passthroughPath: true,
+                    });
+                });
+                if (!!process.env.CS_DISABLE_PLUGINS) return [3 /*break*/, 2];
+                workingDir = args._ && args._.length > 0 ? path.resolve(args._[args._.length - 1]) : undefined;
+                pluginApi_1 = new plugin_1.PluginAPI(logger_1.logger, process.env.CS_PLUGIN, process.env.CS_PLUGIN_PATH, workingDir);
+                return [4 /*yield*/, pluginApi_1.loadPlugins()];
+            case 1:
+                _a.sent();
+                pluginApi_1.mount(app, wsApp);
+                app.use("/api/applications", http_2.ensureAuthenticated, apps.router(pluginApi_1));
+                wrapper_1.wrapper.onDispose(function () { return pluginApi_1.dispose(); });
+                _a.label = 2;
+            case 2:
+                app.use(body_parser_1.default.json());
+                app.use(body_parser_1.default.urlencoded({ extended: true }));
                 app.use("/", vscode.router);
                 wsApp.use("/", vscode.wsRouter.router);
                 app.use("/vscode", vscode.router);
                 wsApp.use("/vscode", vscode.wsRouter.router);
                 app.use("/healthz", health.router);
+                wsApp.use("/healthz", health.wsRouter.router);
                 if (args.auth === cli_1.AuthType.Password) {
                     app.use("/login", login.router);
                 }
@@ -170,16 +205,8 @@ exports.register = function (app, wsApp, server, args) { return __awaiter(void 0
                         http_2.redirect(req, res, "/", {});
                     });
                 }
-                app.use("/proxy", proxy.router);
-                wsApp.use("/proxy", proxy.wsRouter.router);
                 app.use("/static", _static.router);
                 app.use("/update", update.router);
-                papi = new plugin_1.PluginAPI(logger_1.logger, process.env.CS_PLUGIN, process.env.CS_PLUGIN_PATH);
-                return [4 /*yield*/, papi.loadPlugins()];
-            case 1:
-                _a.sent();
-                papi.mount(app);
-                app.use("/api/applications", apps.router(papi));
                 app.use(function () {
                     throw new http_1.HttpError("Not Found", http_1.HttpCode.NotFound);
                 });
@@ -213,7 +240,7 @@ exports.register = function (app, wsApp, server, args) { return __awaiter(void 0
                     });
                 }); };
                 app.use(errorHandler);
-                wsErrorHandler = function (err, req) { return __awaiter(void 0, void 0, void 0, function () {
+                wsErrorHandler = function (err, req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         logger_1.logger.error(err.message + " " + err.stack);
                         req.ws.end();
@@ -225,4 +252,5 @@ exports.register = function (app, wsApp, server, args) { return __awaiter(void 0
         }
     });
 }); };
+exports.register = register;
 //# sourceMappingURL=index.js.map

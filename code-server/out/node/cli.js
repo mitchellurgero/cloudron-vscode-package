@@ -109,7 +109,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.shouldOpenInExistingInstance = exports.shouldRunVsCodeCli = exports.readConfigFile = exports.setDefaults = exports.parse = exports.optionDescriptions = exports.OptionalString = exports.LogLevel = exports.Optional = exports.AuthType = void 0;
+exports.shouldOpenInExistingInstance = exports.shouldRunVsCodeCli = exports.parseConfigFile = exports.readConfigFile = exports.setDefaults = exports.parse = exports.optionDescriptions = exports.OptionalString = exports.LogLevel = exports.Optional = exports.AuthType = void 0;
 var logger_1 = require("@coder/logger");
 var fs = __importStar(require("fs-extra"));
 var js_yaml_1 = __importDefault(require("js-yaml"));
@@ -235,7 +235,7 @@ var options = {
         description: "Set a custom link for the 'Go Home' button in the Application Menu",
     },
 };
-exports.optionDescriptions = function () {
+var optionDescriptions = function () {
     var entries = Object.entries(options).filter(function (_a) {
         var _b = __read(_a, 2), v = _b[1];
         return !!v.description;
@@ -261,7 +261,8 @@ exports.optionDescriptions = function () {
             (typeof v.type === "object" ? " [" + Object.values(v.type).join(", ") + "]" : ""));
     });
 };
-exports.parse = function (argv, opts) {
+exports.optionDescriptions = optionDescriptions;
+var parse = function (argv, opts) {
     var error = function (msg) {
         if (opts === null || opts === void 0 ? void 0 : opts.configFile) {
             msg = "error reading " + opts.configFile + ": " + msg;
@@ -381,6 +382,7 @@ exports.parse = function (argv, opts) {
     logger_1.logger.debug(function () { return ["parsed command line", logger_1.field("args", __assign(__assign({}, args), { password: undefined }))]; });
     return args;
 };
+exports.parse = parse;
 /**
  * Take CLI and config arguments (optional) and return a single set of arguments
  * with the defaults set. Arguments from the CLI are prioritized over config
@@ -506,7 +508,7 @@ function defaultConfigFile() {
  */
 function readConfigFile(configPath) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, _b, _c, configFile, config, configFileArgv, args;
+        var _a, _b, _c, configFile;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
@@ -530,28 +532,41 @@ function readConfigFile(configPath) {
                 case 4: return [4 /*yield*/, fs.readFile(configPath)];
                 case 5:
                     configFile = _d.sent();
-                    config = js_yaml_1.default.safeLoad(configFile.toString(), {
-                        filename: configPath,
-                    });
-                    if (!config || typeof config === "string") {
-                        throw new Error("invalid config: " + config);
-                    }
-                    configFileArgv = Object.entries(config).map(function (_a) {
-                        var _b = __read(_a, 2), optName = _b[0], opt = _b[1];
-                        if (opt === true) {
-                            return "--" + optName;
-                        }
-                        return "--" + optName + "=" + opt;
-                    });
-                    args = exports.parse(configFileArgv, {
-                        configFile: configPath,
-                    });
-                    return [2 /*return*/, __assign(__assign({}, args), { config: configPath })];
+                    return [2 /*return*/, parseConfigFile(configFile.toString(), configPath)];
             }
         });
     });
 }
 exports.readConfigFile = readConfigFile;
+/**
+ * parseConfigFile parses configFile into ConfigArgs.
+ * configPath is used as the filename in error messages
+ */
+function parseConfigFile(configFile, configPath) {
+    if (!configFile) {
+        return { _: [], config: configPath };
+    }
+    var config = js_yaml_1.default.safeLoad(configFile, {
+        filename: configPath,
+    });
+    if (!config || typeof config === "string") {
+        throw new Error("invalid config: " + config);
+    }
+    // We convert the config file into a set of flags.
+    // This is a temporary measure until we add a proper CLI library.
+    var configFileArgv = Object.entries(config).map(function (_a) {
+        var _b = __read(_a, 2), optName = _b[0], opt = _b[1];
+        if (opt === true) {
+            return "--" + optName;
+        }
+        return "--" + optName + "=" + opt;
+    });
+    var args = exports.parse(configFileArgv, {
+        configFile: configPath,
+    });
+    return __assign(__assign({}, args), { config: configPath });
+}
+exports.parseConfigFile = parseConfigFile;
 function parseBindAddr(bindAddr) {
     var u = new URL("http://" + bindAddr);
     return {
@@ -630,15 +645,16 @@ function copyOldMacOSDataDir() {
         });
     });
 }
-exports.shouldRunVsCodeCli = function (args) {
+var shouldRunVsCodeCli = function (args) {
     return !!args["list-extensions"] || !!args["install-extension"] || !!args["uninstall-extension"];
 };
+exports.shouldRunVsCodeCli = shouldRunVsCodeCli;
 /**
  * Determine if it looks like the user is trying to open a file or folder in an
  * existing instance. The arguments here should be the arguments the user
  * explicitly passed on the command line, not defaults or the configuration.
  */
-exports.shouldOpenInExistingInstance = function (args) { return __awaiter(void 0, void 0, void 0, function () {
+var shouldOpenInExistingInstance = function (args) { return __awaiter(void 0, void 0, void 0, function () {
     var readSocketPath, openInFlagCount, socketPath, _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -690,4 +706,5 @@ exports.shouldOpenInExistingInstance = function (args) { return __awaiter(void 0
         }
     });
 }); };
+exports.shouldOpenInExistingInstance = shouldOpenInExistingInstance;
 //# sourceMappingURL=cli.js.map
