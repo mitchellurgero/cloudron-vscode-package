@@ -80,8 +80,13 @@ ADD supervisor/ /etc/supervisor/conf.d/
 RUN sed -e 's,^logfile=.*$,logfile=/run/supervisord.log,' -i /etc/supervisor/supervisord.conf
 
 # add code
-COPY start.sh index.php crontab.template credentials.template phpmyadmin_login.template /app/code/
-COPY code-server /app/code/code-server
+COPY start.sh index.php crontab.template credentials.template /app/code/
+
+## Download code-server
+RUN wget https://github.com/cdr/code-server/releases/download/v3.9.1/code-server-3.9.1-linux-amd64.tar.gz
+RUN tar -xvf code-server-3.9.1-linux-amd64.tar.gz
+RUN mv code-server-3.9.1-linux-amd64 code-server
+
 
 # lock www-data but allow su - www-data to work
 RUN passwd -l www-data && usermod --shell /bin/bash --home /app/data www-data

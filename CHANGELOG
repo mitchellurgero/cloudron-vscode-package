@@ -7,3 +7,5 @@
 - Updated to 3.0 base image from Cloudron
 - Added r-project to the package
 
+[0.1.3]
+- Fix in Dockerfile to make the repo smaller
