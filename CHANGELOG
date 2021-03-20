@@ -5,4 +5,5 @@
 - Update code-server
 - Fix package requirements
 - Updated to 3.0 base image from Cloudron
+- Added r-project to the package
 

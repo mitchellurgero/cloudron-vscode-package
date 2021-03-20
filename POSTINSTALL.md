@@ -1,8 +1,9 @@
 ## VS Code Portion:
-This app has VSCode installed. With the way VSCode is setup right now, it cannot be in a subdirectory.
-This mean that when you visit $CLOUDRON-APP-DOMAIN you will be prompted to login to VS Code.
 
-To see the public LAMP directory - you will need to visit $CLOUDRON-APP-DOMAIN/proxy/8888/.
+This app package contains code-server by CDR to run Visual Studio Code in the browser. It is compatible with most extensions, and is easily modifiable by the user.
+This app package is built off the LAMP7.X package by the Cloudron Team. However, most LAMP features have been heavily changed or removed.
+
+*See DESCRIPTION.md for more information on how to use this package!*
 
 
 ## LAMP Portion:
