@@ -1,57 +1,53 @@
-# VSCode (code-server) Cloudron App
+## Visual Studio Code for Cloudron
 
-This repository contains the Cloudron app package source for a basic code-server.
+This app package contains code-server by CDR to run Visual Studio Code in the browser. It is compatible with most extensions, and is easily modifiable by the user.
+This app package is built off the LAMP7.X package by the Cloudron Team. However, most LAMP features have been heavily changed or removed.
 
-## Installation
+**NOTE** Right now code-server is not isolated per logged in user. This will change in the future as I learn more about code-server and Cloudron Environments.
 
-[![Install](https://cloudron.io/img/button.svg)](https://cloudron.io/button.html?app=org.wordpress.cloudronapp)
+-----
 
-or using the [Cloudron command line tooling](https://cloudron.io/references/cli.html)
+## Features
 
-```
-cloudron install --appstore-id lamp.cloudronapp
-```
+In no particular order:
 
-## Building
+- Multiple Progamming Languages
+- Access your program via port forwarding via code-server (see section below)
+- Cron is still active
+- Credentials for MySQL, etc, are in credentials.txt still
+- Full control over code-server (install extensions, change settings, etc)
+- Uses proxyAuth for authenticating users.
 
-The app package can be built using the [Cloudron command line tooling](https://cloudron.io/references/cli.html).
+## Programming Environments Included
 
-```
-cd lamp-app
+In no particular order:
 
-cloudron build
-cloudron install
-```
+- GOLANG
+- PHP7.4 (PHP8.0 will be included soon!)
+- Python
+- PowerShell
+- DotNet Core (C#, VB.NET, etc)
+- R
+- NodeJS
 
-## Usage
 
-Use `cloudron push` to copy files into `/app/data/public/` and `cloudron exec` to get a remote terminal.
+## Accessing Test Applications compiled and/or ran in code-server
 
-See https://cloudron.io/references/cli.html for how to get the `cloudron` command line tool.
+This app is designed to allow you to directly connect to server ports by browsing https://$CLOUDRON-APP-DOMAIN/proxy/portNumber/ . You must be logged in to do so.
 
-If you want to run for example a custom WordPress within this app, please note that the code will run behind a nginx proxy.
-Apps like WordPress require you to let the app know about that fact.
-For WordPress you would need to put this code into `wp-config.php`:
+### Cron
 
-```
-/*
- http://cmanios.wordpress.com/2014/04/12/nginx-https-reverse-proxy-to-wordpress-with-apache-http-and-different-port/
- http://wordpress.org/support/topic/compatibility-with-wordpress-behind-a-reverse-proxy
- https://wordpress.org/support/topic/wp_home-and-wp_siteurl
- */
-// If WordPress is behind reverse proxy which proxies https to http
-if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-    $_SERVER['HTTP_HOST'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
+This app supports running one or more cronjobs. The jobs are specified using the standard crontab syntax.
 
-    if ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
-        $_SERVER['HTTPS']='on';
-}
-```
+## ionCube
 
-## Tests
+ionCube is a PHP module extension that loads encrypted PHP files and speeds up webpages. ionCube is pre-installed
+and enabled by default.
 
-* Put `HashKnownHosts no` in your `~/.ssh/config`
-* cd test
-* npm install
-* USERNAME=<> PASSWORD=<> mocha --bail test.js
+### Remote Terminal
+
+Code-server includes a built in terminal in the app, or you may:
+
+Use the [web terminal](https://cloudron.io/documentation/apps/#web-terminal) for a remote shell connection into the
+app to adjust configuration files like `php.ini`.
 
