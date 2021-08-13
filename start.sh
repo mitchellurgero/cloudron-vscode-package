@@ -86,5 +86,8 @@ fi
 
 chown -R www-data:www-data /app/data /run/apache2 /run/app /tmp
 
+[[ ! -f /app/data/run.sh ]] && touch /app/data/run.sh
+chown root:root /app/data/run.sh
+
 echo "==> Starting Lamp & Code stack"
 exec /usr/bin/supervisord --configuration /etc/supervisor/supervisord.conf --nodaemon -i Lamp
