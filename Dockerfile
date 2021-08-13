@@ -89,6 +89,6 @@ RUN mv code-server-3.9.1-linux-amd64 code-server
 
 
 # lock www-data but allow su - www-data to work
-RUN passwd -l www-data && usermod --shell /bin/bash --home /app/data www-data
+RUN passwd -l www-data && usermod --shell /bin/bash --home /app/data/www-data www-data
 
 CMD [ "/app/code/start.sh" ]
