@@ -25,6 +25,8 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD5
 RUN add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -sc)-cran40/" --yes
 RUN apt update && apt install --no-install-recommends r-base -y
 
+## Install python3-venv
+RUN apt install -y --no-install-recommends python3-venv python3.8-venv
 
 
 ## Apache Stuff
