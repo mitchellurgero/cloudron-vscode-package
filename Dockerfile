@@ -1,4 +1,4 @@
-FROM cloudron/base:3.0.0@sha256:455c70428723e3a823198c57472785437eb6eab082e79b3ff04ea584faf46e92
+FROM cloudron/base:3.2.0@sha256:ba1d566164a67c266782545ea9809dc611c4152e27686fd14060332dd88263ea
 
 RUN mkdir -p /app/code
 WORKDIR /app/code
@@ -85,9 +85,9 @@ RUN sed -e 's,^logfile=.*$,logfile=/run/supervisord.log,' -i /etc/supervisor/sup
 COPY start.sh index.php crontab.template credentials.template /app/code/
 
 ## Download code-server
-RUN wget https://github.com/coder/code-server/releases/download/v4.0.1/code-server-4.0.1-linux-amd64.tar.gz
-RUN tar -xvf code-server-4.0.1-linux-amd64.tar.gz
-RUN mv code-server-4.0.1-linux-amd64 code-server
+RUN wget https://github.com/coder/code-server/releases/download/v4.7.0/code-server-4.7.0-linux-amd64.tar.gz
+RUN tar -xvf code-server-4.7.0-linux-amd64.tar.gz
+RUN mv code-server-4.7.0-linux-amd64 code-server
 
 
 # lock www-data but allow su - www-data to work
